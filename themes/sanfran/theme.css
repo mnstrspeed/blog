@@ -1,0 +1,20 @@
+#header {
+	background-color: #87B4D3;
+	background-image: url('background.jpg');
+	background-repeat: cover;
+
+	color: white;
+}
+
+#header.sticky {
+	background-image: none;
+}
+
+#about a {
+	background-color: black;
+	color: white;
+}
+
+#about a:hover {
+	background-color: #172A38;
+}

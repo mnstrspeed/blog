@@ -1,0 +1,108 @@
+doctype html
+html(lang="en")
+	head
+		title=title
+		link(href='favicon.png', rel='icon', type='image/png')
+		link(href='blog.css', rel='stylesheet')
+		link(href='themes/#{theme}/theme.css', rel='stylesheet')
+		link(href='lib/prism/prism.css', rel='stylesheet')
+		meta(name='viewport', content='width=device-width; initial-scale=1.0')
+        
+		script(type='text/javascript').
+        
+            // Setup scrolling effects
+			var previousScrollTop = 0;
+			window.onload = function() {
+				window.addEventListener('scroll', function(e) {
+                    // Decide which version of the header to show (default/sticky)
+					var header = document.getElementById('header');
+                    header.className = window.pageYOffset > 300 ? "sticky" : "";
+
+                    // Adjust anchor based on scroll location
+					if (window.pageYOffset > previousScrollTop) {
+						var articles = document.getElementsByTagName('article');
+						var current = 0;
+						for (var i in articles) {
+							if (window.pageYOffset >= articles[i].offsetTop) {
+								current = i;
+							}
+						}
+                        // We don't want to flood events, so only update if needed
+						if (location.hash != '#' + articles[current].id) {
+							location.hash = '#' + articles[current].id;
+						}
+					}
+					previousScrollTop = window.pageYOffset;
+				});
+			}
+            
+            // Expand DISQUS comment container e
+			function showComments(e) {
+				var prev = document.getElementById('disqus_thread');
+				if (prev) {
+					prev.id = '';
+				}
+                
+				e.parentNode.id = 'disqus_thread';
+				DISQUS.reset({
+					reload: true,
+					config: function () {  
+						this.page.identifier = e.parentNode.parentNode.id;
+					}
+				});
+			}
+            
+            // Insert email with JavaScript, because no one likes spam
+			function insert() {
+				var a = 'mail'.concat('@', 'tomsa', 'nders.nl');
+				document.write('<a href="mailto:' + a + '">' + a + '</a>');
+                // Hah, that'll throw them off!
+			}
+            
+		script(type='text/javascript').
+            // Google Analytics
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+			ga('create', 'UA-24422315-1', 'auto');
+			ga('send', 'pageview');
+            
+	body
+		script(src='lib/prism/prism.js')
+		script(type='text/javascript').
+            // DISQUS
+			var disqus_shortname = 'tomsanders';
+			(function() {
+				var dsq = document.createElement('script'); 
+				dsq.type = 'text/javascript'; 
+				dsq.async = true;
+				dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			})();
+            
+		header(id='header')
+			h1 Things
+			h2 by Tom Sanders
+			ul(id='about')
+				li Studying at 
+					a(href='http://ru.nl') Radboud University
+				li Living in 
+					a(href='https://www.google.com/maps/place/Nijmegen,+The+Netherlands') Nijmegen, The Netherlands
+				li Working at 
+					a(href='http://ru.nl/icis') New Devices Lab
+				li Socializing on 
+					a(href='http://facebook.com/tomsanders.nl') Facebook
+				li Publishing projects on 
+					a(href='http://github.com/mnstrspeed') GitHub
+				li Receiving email at 
+					script(type='text/javascript') insert();
+		main
+			each post in posts
+				article(id=post.identifier)
+					header
+						.details
+							time= post.meta.Date
+						a(href=post.path)
+							h1!= post.meta.Title
+					!{post.body}
+					section.comments
+						button(onclick='showComments(this)') Show comments
+		footer

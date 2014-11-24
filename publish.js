@@ -13,7 +13,7 @@ var model = {
 
 var args = process.argv.splice(2);
 var paths = args.filter(function(a) {
-	return !a.startsWith('--');
+	return a.indexOf('--') != 0;
 });
 paths.forEach(function(path) {
 	var content = fs.readFileSync(path).toString();
@@ -34,7 +34,7 @@ var render = jade.compileFile('blog.jade', { pretty: true });
 var html = render(model);
 
 // Upload
-if (args.contains('--dry')) {
+if (args.indexOf('--dry') >= 0) {
 	console.log(html);
 } else {
 	// Upload to server
